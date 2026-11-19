@@ -94,16 +94,14 @@ local function collect_pairs(bufnr)
 		while col < #line do
 			local char = line:sub(col + 1, col + 1)
 
-			if open_to_close[char] or close_to_open[char] then
-				if not should_skip(bufnr, row - 1, col) then
-					if open_to_close[char] then
-						stack[#stack + 1] = {
-							char = char,
-							row = row - 1,
-							col = col,
-							depth = #stack + 1,
-						}
-					end
+			if not should_skip(bufnr, row - 1, col) then
+				if open_to_close[char] then
+					stack[#stack + 1] = {
+						char = char,
+						row = row - 1,
+						col = col,
+						depth = #stack + 1,
+					}
 				elseif close_to_open[char] then
 					local expected = close_to_open[char]
 					local match
