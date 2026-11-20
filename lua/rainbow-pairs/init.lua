@@ -101,41 +101,39 @@ local function collect_pairs(bufnr)
 		while col < #line do
 			local char = line:sub(col + 1, col + 1)
 
-			if open_to_close[char] or close_to_open[char] then
-				if not should_skip(bufnr, row - 1, col) then
-					if open_to_close[char] then
-						stack[#stack + 1] = {
-							char = char,
-							row = row - 1,
-							col = col,
-							depth = #stack + 1,
-						}
-					elseif close_to_open[char] then
-						local expected = close_to_open[char]
-						local match
+			if not should_skip(bufnr, row - 1, col) then
+				if open_to_close[char] then
+					stack[#stack + 1] = {
+						char = char,
+						row = row - 1,
+						col = col,
+						depth = #stack + 1,
+					}
+				elseif close_to_open[char] then
+					local expected = close_to_open[char]
+					local match
 
-						for i = #stack, 1, -1 do
-							if stack[i].char == expected then
-								match = i
-								break
-							end
+					for i = #stack, 1, -1 do
+						if stack[i].char == expected then
+							match = i
+							break
 						end
+					end
 
-						if match then
-							local opening = stack[match]
+					if match then
+						local opening = stack[match]
 
-							pairs[#pairs + 1] = {
-								open = opening,
-								close = {
-									row = row - 1,
-									col = col,
-								},
-								depth = opening.depth,
-							}
+						pairs[#pairs + 1] = {
+							open = opening,
+							close = {
+								row = row - 1,
+								col = col,
+							},
+							depth = opening.depth,
+						}
 
-							for i = #stack, match, -1 do
-								stack[i] = nil
-							end
+						for i = #stack, match, -1 do
+							stack[i] = nil
 						end
 					end
 				end
