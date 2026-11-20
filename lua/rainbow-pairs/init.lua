@@ -8,12 +8,12 @@ local defaults = {
 	skip_comments = true,
 
 	colors = {
-		"#E06C75", -- Red
-		"#E5C07B", -- Yellow
-		"#98C379", -- Green
-		"#56B6C2", -- Cyan
-		"#61AFEF", -- Blue
-		"#C678DD", -- Purple
+		"DiagnosticError",
+		"DiagnosticWarn",
+		"DiagnosticInfo",
+		"DiagnosticHint",
+		"Statement",
+		"PreProc",
 	},
 }
 
@@ -46,10 +46,17 @@ local function get_pairs(bufnr)
 end
 
 local function define_highlights()
-	for i, color in ipairs(config.colors) do
+	for i, source in ipairs(config.colors) do
+		local hl = vim.api.nvim_get_hl(0, {
+			name = source,
+			link = false,
+		})
+
 		vim.api.nvim_set_hl(0, "RainbowPairs" .. i, {
-			fg = color,
-			default = true,
+			fg = hl.fg,
+			bold = hl.bold,
+			italic = hl.italic,
+			default = false,
 		})
 	end
 end
